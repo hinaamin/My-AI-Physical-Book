@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-btn:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #007bff;
+            white-space: pre-wrap;
+        }
+        .success {
+            border-left-color: #28a745;
+        }
+        .error {
+            border-left-color: #dc3545;
+        }
+        input[type="text"] {
+            width: 70%;
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Chatbot Backend Test</h1>
+
+        <div class="test-section">
+            <h3>Health Check</h3>
+            <button class="test-btn" onclick="testHealth()">Test Backend Health</button>
+            <div id="health-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Chat Test</h3>
+            <input type="text" id="user-message" placeholder="Enter your message..." value="What is Physical AI?">
+            <button class="test-btn" onclick="testChat()">Send Message</button>
+            <div id="chat-result" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>Selected Text Test</h3>
+            <input type="text" id="selected-text" placeholder="Selected text..." value="Physical AI combines physics and machine learning">
+            <input type="text" id="question-text" placeholder="Your question..." value="Can you explain this concept?">
+            <button class="test-btn" onclick="testSelectedText()">Test Selected Text</button>
+            <div id="selected-text-result" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        const BACKEND_URL = 'http://localhost:8000';
+
+        async function testHealth() {
+            const resultDiv = document.getElementById('health-result');
+            try {
+                const response = await fetch(`${BACKEND_URL}/health`);
+                const data = await response.json();
+
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `✅ Health Check Success: ${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Health Check Failed: ${error.message}`;
+            }
+        }
+
+        async function testChat() {
+            const resultDiv = document.getElementById('chat-result');
+            const messageInput = document.getElementById('user-message');
+            const message = messageInput.value || 'Hello';
+
+            try {
+                resultDiv.textContent = 'Sending message...';
+
+                // Generate a temporary user ID
+                const userId = 'test_user_' + Date.now();
+
+                const response = await fetch(`${BACKEND_URL}/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        user_id: userId
+                    })
+                });
+
+                const data = await response.json();
+
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `Response: ${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Chat Request Failed: ${error.message}`;
+            }
+        }
+
+        async function testSelectedText() {
+            const resultDiv = document.getElementById('selected-text-result');
+            const selectedText = document.getElementById('selected-text').value;
+            const questionText = document.getElementById('question-text').value;
+
+            try {
+                resultDiv.textContent = 'Sending selected text request...';
+
+                // Generate a temporary user ID
+                const userId = 'test_user_' + Date.now();
+
+                const response = await fetch(`${BACKEND_URL}/chat/selected-text`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: questionText,
+                        user_id: userId,
+                        selected_text: selectedText
+                    })
+                });
+
+                const data = await response.json();
+
+                resultDiv.className = 'result success';
+                resultDiv.textContent = `Response: ${JSON.stringify(data, null, 2)}`;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Selected Text Request Failed: ${error.message}`;
+            }
+        }
+
+        // Allow Enter key to trigger chat
+        document.getElementById('user-message').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                testChat();
+            }
+        });
+    </script>
+</body>
+</html>
