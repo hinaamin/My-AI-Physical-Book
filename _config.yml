@@ -1,0 +1,32 @@
+title: Physical AI Humanoid Robotics Book
+email: your-email@example.com
+description: A comprehensive textbook on Physical AI and Humanoid Robotics
+baseurl: "/humonide-robotics" # the subpath of your site, e.g. /blog
+url: "https://yourusername.github.io" # the base hostname & protocol for your site
+github_username: your-username
+
+# Build settings
+markdown: kramdown
+theme: minima
+plugins:
+  - jekyll-feed
+
+# Collections for chapters
+collections:
+  chapters:
+    output: true
+    permalink: /chapters/:name:output_ext
+
+# Exclude from processing.
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+
+# Custom variables
+author: Your Name
+github: https://github.com/your-username/humonide-robotics
